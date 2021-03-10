@@ -10,7 +10,7 @@ use w5500_hl::ll::{
     LinkStatus, PhyCfg, Registers, Socket,
 };
 
-pub struct PoeFeather<SPI, CS, I2C> {
+pub struct PoeFeatherWing<SPI, CS, I2C> {
     /// SPI bus.
     spi: SPI,
     /// GPIO for chip select.
@@ -29,14 +29,14 @@ pub enum Error<SpiError, PinError, I2CError> {
     I2C(I2CError),
 }
 
-impl<SPI, CS, I2C, SpiError, PinError, I2CError> PoeFeather<SPI, CS, I2C>
+impl<SPI, CS, I2C, SpiError, PinError, I2CError> PoeFeatherWing<SPI, CS, I2C>
 where
     SPI: Transfer<u8, Error = SpiError> + Write<u8, Error = SpiError>,
     CS: OutputPin<Error = PinError>,
     I2C: WriteRead<Error = I2CError>,
 {
     pub fn new(spi: SPI, cs: CS, i2c: I2C) -> Self {
-        PoeFeather { spi, cs, i2c }
+        PoeFeatherWing { spi, cs, i2c }
     }
 
     pub fn free(self) -> (SPI, CS, I2C) {
