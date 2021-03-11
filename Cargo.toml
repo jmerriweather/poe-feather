@@ -26,3 +26,7 @@ std = ["w5500-hl/std"]
 
 [dev-dependencies]
 w5500-hl = { version = "~0.3", features = ["embedded-hal", "defmt"] }
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
