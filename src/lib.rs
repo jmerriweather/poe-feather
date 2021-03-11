@@ -1,6 +1,16 @@
 #![no_std]
 
-pub use w5500_hl;
+pub mod net;
+
+//pub use w5500_hl;
+
+pub use w5500_hl::Udp;
+pub use w5500_hl::Tcp;
+
+use net::{
+    Eui48Addr,
+    Ipv4Addr
+};
 
 use {
     embedded_hal::{
@@ -9,7 +19,6 @@ use {
     },
     w5500_hl::ll::{
         blocking::vdm::W5500,
-        net::{Eui48Addr, Ipv4Addr},
         Registers,
     }
 };
@@ -50,6 +59,18 @@ where
         PoeFeatherWing { i2c, w5500: W5500::new(spi, cs) }
     }
 
+    pub fn initialise(&mut self, ip: &Ipv4Addr, gateway: &Ipv4Addr, subnet_mask: &Ipv4Addr) -> Result<(), Error<SpiError, PinError, I2CError>> {
+
+        let mac = self.get_mac_address().map_err(Error::I2C)?;
+
+        self.w5500.set_shar(&mac)?;
+        self.w5500.set_sipr(&ip)?;
+        self.w5500.set_gar(&gateway)?;
+        self.w5500.set_subr(&subnet_mask)?;
+
+        Ok(())
+    }
+
     pub fn get_mac_address(&mut self) -> Result<Eui48Addr, I2CError> {
         let registers: &[u8; 6] = &[0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF];
         let mut collect: [u8; 6] = [0; 6];
@@ -63,15 +84,19 @@ where
         Ok(Eui48Addr::from(collect))
     }
 
-    pub fn initialise(&mut self, ip: &Ipv4Addr, gateway: &Ipv4Addr, subnet_mask: &Ipv4Addr) -> Result<(), Error<SpiError, PinError, I2CError>> {
+    pub fn set_mac_address(&mut self, mac: &Eui48Addr) -> Result<(), Error<SpiError, PinError, I2CError>> {
+        Ok(self.w5500.set_shar(mac)?)
+    }
 
-        let mac = self.get_mac_address().map_err(Error::I2C)?;
+    pub fn set_ip_address(&mut self, ip: &Ipv4Addr) -> Result<(), Error<SpiError, PinError, I2CError>> {
+        Ok(self.w5500.set_sipr(ip)?)
+    }
 
-        self.w5500.set_shar(&mac)?;
-        self.w5500.set_sipr(&ip)?;
-        self.w5500.set_gar(&gateway)?;
-        self.w5500.set_subr(&subnet_mask)?;
+    pub fn set_gateway(&mut self, gateway: &Ipv4Addr) -> Result<(), Error<SpiError, PinError, I2CError>> {
+        Ok(self.w5500.set_gar(gateway)?)
+    }
 
-        Ok(())
+    pub fn set_subnet_mask(&mut self, subnet_mask: &Ipv4Addr) -> Result<(), Error<SpiError, PinError, I2CError>> {
+        Ok(self.w5500.set_subr(subnet_mask)?)
     }
 }
