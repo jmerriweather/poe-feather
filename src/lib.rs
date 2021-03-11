@@ -1,16 +1,17 @@
 #![no_std]
 
-use embedded_hal::{
-    blocking::{i2c::WriteRead, spi::Transfer, spi::Write},
-    digital::v2::OutputPin,
-};
 pub use w5500_hl;
-pub use w5500_hl::ll;
 
-use w5500_hl::ll::{
-    blocking::vdm::W5500,
-    net::{Eui48Addr, Ipv4Addr, SocketAddrV4},
-    LinkStatus, PhyCfg, Registers, Socket,
+use {
+    embedded_hal::{
+        blocking::{i2c::WriteRead, spi::Transfer, spi::Write},
+        digital::v2::OutputPin,
+    },
+    w5500_hl::ll::{
+        blocking::vdm::W5500,
+        net::{Eui48Addr, Ipv4Addr},
+        Registers,
+    }
 };
 
 pub struct PoeFeatherWing<SPI, CS, I2C> {
@@ -72,13 +73,5 @@ where
         self.w5500.set_subr(&subnet_mask)?;
 
         Ok(())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
     }
 }
