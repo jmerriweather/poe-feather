@@ -3,3 +3,5 @@ A no_std Rust driver for the [PoE FeatherWing by Silicognition LLC](https://www.
 
 ![PoE FeatherWing](poe-featherwing-front-back-01.jpg?raw=true)
 
+## Example
+* [UDP Example with Adafruit nrf52840 Express](examples/udp)
