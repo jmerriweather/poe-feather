@@ -1,11 +1,26 @@
 [package]
 name = "poe-featherwing"
 version = "0.1.0"
-authors = ["Jonathan Merriweather <Jono@merriweather.com.au>"]
+authors = ["Jonathan Merriweather <Jono@live.com>"]
 edition = "2018"
+repository = "https://github.com/jmerriweather/poe-featherwing"
+license = "MIT"
+description = "A no_std Rust driver for the PoE FeatherWing by Silicognition LLC."
+readme = "README.md"
+keywords = ["rust", "ethernet", "spi", "driver", "embedded-hal-driver", "W5500", "wiznet", "poe", "featherwing"]
+categories = ["embedded", "hardware-support", "no-std"]
+homepage = "https://github.com/jmerriweather/poe-featherwing"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[badges]
+maintenance = { status = "experimental" }
+
 [dependencies]
 embedded-hal = "0.2.4"
-w5500-hl = { version = "0.3.0", features = ["defmt", "embedded-hal"] }
+w5500-hl = { version = "0.3.0" }
+
+[features]
+defmt = ["w5500-hl/defmt"]
+embedded-hal = ["w5500-hl/embedded-hal"]
+std = ["w5500-hl/std"]
