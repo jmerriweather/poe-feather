@@ -17,10 +17,12 @@ homepage = "https://github.com/jmerriweather/poe-featherwing"
 maintenance = { status = "experimental" }
 
 [dependencies]
-embedded-hal = "0.2.4"
-w5500-hl = { version = "0.3.0" }
+embedded-hal = "~0.2"
+w5500-hl = { version = "~0.3", features = ["embedded-hal"] }
 
 [features]
 defmt = ["w5500-hl/defmt"]
-embedded-hal = ["w5500-hl/embedded-hal"]
 std = ["w5500-hl/std"]
+
+[dev-dependencies]
+w5500-hl = { version = "~0.3", features = ["embedded-hal", "defmt"] }
