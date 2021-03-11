@@ -28,6 +28,8 @@ const W5500_IP: Ipv4Addr = Ipv4Addr::new(192, 168, 1, 222);
 const GATEWAY: Ipv4Addr = Ipv4Addr::new(192, 168, 1, 1);
 /// W5500 subnet mask
 const SUBNET_MASK: Ipv4Addr = Ipv4Addr::new(255, 255, 255, 0);
+/// Target static IPv4
+const TARGET_IP: Ipv4Addr = Ipv4Addr::new(192, 168, 1, 183);
 
 #[cortex_m_rt::entry]
 fn main() -> ! {
@@ -93,7 +95,7 @@ fn main() -> ! {
 
         // send 4 bytes to 192.168.2.4:8080, and get the number of bytes transmitted
         let data: &[u8] = b"Hello World!";
-        let destination = SocketAddrV4::new(Ipv4Addr::new(192, 168, 1, 183), 32522);
+        let destination = SocketAddrV4::new(TARGET_IP, 32522);
         let tx_bytes = poe_feather.w5500.udp_send_to(Socket::Socket0, &data, &destination).unwrap();
 
         defmt::info!("sent {=usize}", tx_bytes);
