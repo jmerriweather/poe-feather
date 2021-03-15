@@ -13,13 +13,12 @@ use nrf52840_hal::{
 
 use poe_featherwing::{
   PoeFeatherWing,
-  w5500_hl::{
-    Udp,
-    ll::{
-      net::{Ipv4Addr, SocketAddrV4},
-      LinkStatus, PhyCfg, Registers, Socket
-    }
-  }
+  net::{
+    Ipv4Addr,
+    SocketAddrV4
+  },
+  Udp,
+  Socket
 };
 
 /// W5500 static IPv4
@@ -59,7 +58,7 @@ fn main() -> ! {
       0,
     );
 
-    let mut delay = Timer::new(board.TIMER1);
+    let mut delay = Timer::new(board.TIMER0);
 
     let cs_w5500 = p0_pins.p0_27.into_push_pull_output(Level::Low).degrade();
 
@@ -70,19 +69,9 @@ fn main() -> ! {
     poe_feather.initialise(&W5500_IP, &GATEWAY, &SUBNET_MASK).unwrap();
 
     defmt::debug!("Polling for link up");
-    let mut attempts: usize = 0;
-    loop {
-        let phy_cfg: PhyCfg = poe_feather.w5500.phycfgr().unwrap();
-        if phy_cfg.lnk() == LinkStatus::Up {
-            break;
-        }
-        defmt::debug!("Waiting...");
-        assert!(attempts < 50, "Failed to link up in 5s");
-        delay.delay(100000);
-        attempts += 1;
-    }
+    poe_feather.wait_for_linkup(&mut delay, 5000).unwrap();
 
-    let version: u8 = poe_feather.w5500.version().unwrap();
+    let version: u8 = poe_feather.get_version().unwrap();
 
     defmt::info!("w5500 version {=u8}", version);
 
